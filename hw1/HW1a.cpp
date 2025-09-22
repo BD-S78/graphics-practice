@@ -82,7 +82,6 @@ HW1a::resizeGL(int w, int h)
 	windowHeight = h;
 
 
-	// compute aspect ratio
 	float xmax, ymax;
 	float ar = (float)w / h;
 	if (ar > 1.0) {		

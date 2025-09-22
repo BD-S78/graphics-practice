@@ -55,21 +55,17 @@ HW1b::initializeGL()
 void
 HW1b::resizeGL(int w, int h)
 {
-	// PUT YOUR CODE HERE
-	// copying rn idk
-	// compute aspect ratio
 	float xmax, ymax;
 	float ar = (float)w / h;
-	if (ar > 1.0) {		// wide screen
+	if (ar > 1.0) {		
 		xmax = ar;
 		ymax = 1.;
 	}
-	else {		// tall screen
+	else {		
 		xmax = 1.;
 		ymax = 1 / ar;
 	}
 
-	// set viewport to occupy full canvas
 	glViewport(0, 0, w, h);
 
 	// init viewing coordinates for orthographic projection
@@ -89,14 +85,15 @@ HW1b::resizeGL(int w, int h)
 void
 HW1b::paintGL()
 {
-	// PUT YOUR CODE HERE
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+
 	int i, k = 0;
 	int colorArrSize = m_colors.size();
-		for (i = 0; i < colorArrSize; i++) {
+		for (i = 0; i < colorArrSize; i++) { //each color = 3 vertexes in m_points for a triangle
 			glBegin(GL_TRIANGLES);
 			glColor3f(m_colors[i][0], m_colors[i][1], m_colors[i][2]);
 			for (k = i*3; k < i*3 + 3; ++k) {
@@ -241,12 +238,12 @@ HW1b::initBuffers()
 void
 HW1b::divideTriangle(vec2 a, vec2 b, vec2 c, int count)
 {
-	if (count <= 0) {
+	if (count <= 0) { //base case
 		triangle(a, b, c);
 		return;
 	}
-	vec2 abHalf = vec2((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0);
-	vec2 acHalf = vec2((a[0] + c[0]) / 2.0, (a[1] + c[1]) / 2.0);
+	vec2 abHalf = vec2((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0); //find half pos for each line. 4 bew smaller triangles that actually matter, 
+	vec2 acHalf = vec2((a[0] + c[0]) / 2.0, (a[1] + c[1]) / 2.0); //original no longer matters
 	vec2 bcHalf = vec2((b[0] + c[0]) / 2.0, (b[1] + c[1]) / 2.0);
 	divideTriangle(a, abHalf, acHalf, count - 1);
 	divideTriangle(b, abHalf, bcHalf, count - 1);
