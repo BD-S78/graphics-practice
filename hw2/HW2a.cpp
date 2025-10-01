@@ -71,7 +71,33 @@ HW2a::initializeGL()
 void
 HW2a::resizeGL(int w, int h)
 {
-	// PUT YOUR CODE HERE
+	// save window dimensions
+	m_winW = w;
+	m_winH = h;
+
+	// compute aspect ratio
+	float ar = (float)w / h;
+
+	// set xmax, ymax;
+	float xmax, ymax;
+	if (ar > 1.0) {		// wide screen
+		xmax = ar;
+		ymax = 1.;
+	}
+	else {		// tall screen
+		xmax = 1.;
+		ymax = 1 / ar;
+	}
+
+
+	// compute orthographic projection from viewing coordinates;
+	// we use Qt's 4x4 matrix class in place of legacy OpenGL code:
+	// glLoadIdentity();
+	// glOrtho(-xmax, xmax, -ymax, ymax, -1.0, 1.0);
+	// 
+
+	m_projection.setToIdentity();
+	m_projection.ortho(-xmax, xmax, -ymax, ymax, -1.0, 1.0);
 }
 
 
@@ -110,8 +136,57 @@ HW2a::paintGL()
 	int w = m_winW / 3;
 	int h = m_winH / 3;
 
-	// use glsl program
-	// PUT YOUR CODE HERE
+	int i, j, k = 0;
+	QMatrix4x4 viewpointChange; //need to create a matrix to multiply original coords in the vshader to match the new coords of viewport
+
+
+	// bind vertex buffer to the GPU; enable buffer to be accessed
+	// via the attribute vertex variable and specify data format
+	//glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glEnableVertexAttribArray(ATTRIB_VERTEX);
+	glVertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, false, 0, NULL);
+	
+
+
+	glUseProgram(m_program[HW2A].programId());
+
+	for (i = 0; i < 3; ++i) {
+		for (j = 0; j < 3; ++j) {
+
+			// compute aspect ratio
+			float ar = (float)w / h;
+
+			// set xmax, ymax;
+			float xmax, ymax;
+			if (ar > 1.0) {		// wide screen
+				xmax = ar;
+				ymax = 1.;
+			}
+			else {		// tall screen
+				xmax = 1.;
+				ymax = 1 / ar;
+			}
+
+
+			viewpointChange.setToIdentity();
+			viewpointChange.ortho(-xmax, xmax, -ymax, ymax, -1.0, 1.0);
+
+
+
+
+
+			glUniformMatrix4fv(PROJ, 1, GL_FALSE, viewpointChange.constData());
+		
+			glViewport(j * w, i * h, w, h);
+			glDrawArrays(DrawModes[k], 0, m_vertNum);
+			k = k + 1;
+		}
+	}
+
+	glUseProgram(0);
+
+
+	glDisableVertexAttribArray(ATTRIB_VERTEX);
 
 	// disable vertex shader point size adjustment
 	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
