@@ -108,12 +108,14 @@ HW2b::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	m_shader[HW2B].bind();
+
+	/*m_shader[HW2B].bind();
 
 	m_shader[HW2B].setUniformValue(m_uniform[HW2B][MV], m_modelview);
 	m_shader[HW2B].setUniformValue(m_uniform[HW2B][PROJ], m_projection);
 	m_shader[HW2B].setUniformValue(m_uniform[HW2B][THETA], m_theta);
 	m_shader[HW2B].setUniformValue(m_uniform[HW2B][TWIST], (int)m_twist);
+	*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 	glEnableVertexAttribArray(ATTRIB_VERTEX);
@@ -123,9 +125,22 @@ HW2b::paintGL()
 	glEnableVertexAttribArray(ATTRIB_COLOR);
 	glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, false, 0, 0);
 
+	glUseProgram(m_program[HW2B].programId());
+
+
+	glUniformMatrix4fv(m_uniform[HW2B][PROJ], 1, GL_FALSE, m_projection.constData());
+	glUniformMatrix4fv(m_uniform[HW2B][MV], 1, GL_FALSE, m_modelview.constData());
+	glUniform1i(m_uniform[HW2B][THETA], m_theta);
+	glUniform1i(m_uniform[HW2B][TWIST], (int)m_twist);
+
+
+
 	glDrawArrays(GL_TRIANGLES, 0, m_numPoints);
 
-	m_shader[HW2B].release();
+	glUseProgram(0);
+	glDisableVertexAttribArray(ATTRIB_COLOR);
+	glDisableVertexAttribArray(ATTRIB_VERTEX);
+
 }
 
 
@@ -365,10 +380,9 @@ HW2b::changeTheta(int angle)
 	// init vars
 	m_theta = angle * (M_PI / 180.);	// convert angle to radians
 
-	// redundant now 
 	// update model's rotation matrix
-	// m_modelview.setToIdentity();
-	// m_modelview.rotate(angle, QVector3D(0.0f, 0.0f, 1.0f));
+	m_modelview.setToIdentity();
+	m_modelview.rotate(angle, QVector3D(0.0f, 0.0f, 1.0f));
 
 	// draw
 	updateGL();

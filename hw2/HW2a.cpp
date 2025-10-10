@@ -175,7 +175,7 @@ HW2a::paintGL()
 
 
 
-			glUniformMatrix4fv(PROJ, 1, GL_FALSE, viewpointChange.constData());
+			glUniformMatrix4fv(m_uniform[HW2A][PROJ], 1, GL_FALSE, viewpointChange.constData());
 		
 			glViewport(j * w, i * h, w, h);
 			glDrawArrays(DrawModes[k], 0, m_vertNum);

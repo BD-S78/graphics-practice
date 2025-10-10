@@ -16,15 +16,20 @@ void main()
 
 	float d = 1.0;
 	if(u_Twist == 1) {
-		d = length(a_Position);
+		d = a_Position[0]*a_Position[0]+ a_Position[1]*a_Position[1];
+		float angle = d * u_Theta;
+		float s = sin(angle);
+		float c = cos(angle);
+
+		vec2 pos = vec2(a_Position.x * c - a_Position.y * s,
+				a_Position.x * s + a_Position.y * c);
+        gl_Position = u_Projection * vec4(pos, 0, 1);
+
+
+
 	}
 	
-	float angle = d * u_Theta;
-	float s = sin(angle);
-	float c = cos(angle);
-
-	vec2 pos = vec2(a_Position.x * c - a_Position.y * s,
-			a_Position.x * s + a_Position.y * c);
-
-	gl_Position = u_Projection * u_Modelview * vec4(pos, 0.0, 1.0);
+	else {
+	gl_Position = u_Projection * u_Modelview * vec4(a_Position, 0.0, 1.0);
+	}
 }
