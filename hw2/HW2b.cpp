@@ -130,7 +130,7 @@ HW2b::paintGL()
 
 	glUniformMatrix4fv(m_uniform[HW2B][PROJ], 1, GL_FALSE, m_projection.constData());
 	glUniformMatrix4fv(m_uniform[HW2B][MV], 1, GL_FALSE, m_modelview.constData());
-	glUniform1i(m_uniform[HW2B][THETA], m_theta);
+	glUniform1f(m_uniform[HW2B][THETA], m_theta);
 	glUniform1i(m_uniform[HW2B][TWIST], (int)m_twist);
 
 

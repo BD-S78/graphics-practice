@@ -16,7 +16,7 @@ void main()
 
 	float d = 1.0;
 	if(u_Twist == 1) {
-		d = a_Position[0]*a_Position[0]+ a_Position[1]*a_Position[1];
+		d = length(a_Position);
 		float angle = d * u_Theta;
 		float s = sin(angle);
 		float c = cos(angle);
