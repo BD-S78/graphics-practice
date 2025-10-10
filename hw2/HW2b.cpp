@@ -109,13 +109,6 @@ HW2b::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
-	/*m_shader[HW2B].bind();
-
-	m_shader[HW2B].setUniformValue(m_uniform[HW2B][MV], m_modelview);
-	m_shader[HW2B].setUniformValue(m_uniform[HW2B][PROJ], m_projection);
-	m_shader[HW2B].setUniformValue(m_uniform[HW2B][THETA], m_theta);
-	m_shader[HW2B].setUniformValue(m_uniform[HW2B][TWIST], (int)m_twist);
-	*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 	glEnableVertexAttribArray(ATTRIB_VERTEX);

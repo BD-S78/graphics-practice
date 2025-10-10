@@ -23,13 +23,11 @@ void main()
 
 		vec2 pos = vec2(a_Position.x * c - a_Position.y * s,
 				a_Position.x * s + a_Position.y * c);
-        gl_Position = u_Projection * vec4(pos, 0, 1);
 
+        	gl_Position = u_Projection * vec4(pos, 0, 1);
+	}	
 
-
-	}
-	
 	else {
-	gl_Position = u_Projection * u_Modelview * vec4(a_Position, 0.0, 1.0);
+		gl_Position = u_Projection * u_Modelview * vec4(a_Position, 0.0, 1.0);
 	}
 }
