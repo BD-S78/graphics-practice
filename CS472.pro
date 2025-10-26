@@ -33,3 +33,4 @@ SOURCES +=	hw0/HW0a.cpp	\
 		hw4/HW4b.cpp	\
 		hw4/HW4c.cpp
 
+CONFIG += c++17
