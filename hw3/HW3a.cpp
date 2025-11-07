@@ -124,6 +124,18 @@ HW3a::paintGL()
 	// attribute vertex variable and specify data format
 	// PUT YOUR CODE HERE
 
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	glEnableVertexAttribArray(ATTRIB_VERTEX);
+	glVertexAttribPointer(ATTRIB_VERTEX, 2, GL_FLOAT, false, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_texBuffer);
+	glEnableVertexAttribArray(ATTRIB_TEXCOORD);
+	glVertexAttribPointer(ATTRIB_TEXCOORD, 2, GL_FLOAT, false, 0, 0);
+
+	glUseProgram(m_program[TEXTURE].programId());
+
+
 	// bind texture coord buffer to the GPU; enable buffer to be copied to the
 	// attribute texture coordinate variable and specify data format
 	// PUT YOUR CODE HERE
@@ -134,14 +146,27 @@ HW3a::paintGL()
 	// pass parameters to vertex shader
 	// PUT YOUR CODE HERE
 
+
+	glUniformMatrix4fv(m_uniform[TEXTURE][PROJ], 1, GL_FALSE, m_projection.constData());
+	glUniformMatrix4fv(m_uniform[TEXTURE][MV], 1, GL_FALSE, m_modelview.constData());
+	glUniform1f(m_uniform[TEXTURE][THETA], m_theta);
+	glUniform1i(m_uniform[TEXTURE][TWIST], (int)m_twist);
+
 	// draw texture mapped triangles
 	// PUT YOUR CODE HERE
+	glDrawArrays(GL_TRIANGLES, 0, m_numPoints);
 
 	glLineWidth(1.5f);
 
 	// draw wireframe, if necessary
 	if(m_wire) {
-		// PUT YOUR CODE HERE
+		glUseProgram(m_program[WIREFRAME].programId());
+
+		glUniformMatrix4fv(m_uniform[WIREFRAME][PROJ], 1, GL_FALSE, m_projection.constData());
+		glUniformMatrix4fv(m_uniform[WIREFRAME][MV], 1, GL_FALSE, m_modelview.constData());
+		glUniform1f(m_uniform[WIREFRAME][THETA], m_theta);
+		glUniform1i(m_uniform[WIREFRAME][TWIST], (int)m_twist);
+		glDrawArrays(GL_LINE_LOOP, i * 3, 3);
 	}
 }
 
@@ -345,6 +370,24 @@ HW3a::initVertexBuffer()
 	};
 
 	// PUT YOUR CODE HERE
+
+	// recursively subdivide triangle into triangular facets;
+	// store vertex positions and colors in m_points and m_colors, respectively
+	divideTriangle(vertices[0], vertices[1], vertices[2], m_subdivisions);
+	m_numPoints = (int)m_points.size();		// save number of vertices
+
+	// bind vertex buffer to the GPU and copy the vertices from CPU to GPU
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, m_numPoints * sizeof(vec2), &m_points[0], GL_STATIC_DRAW);
+
+	// bind color buffer to the GPU and copy the colors from CPU to GPU
+	glBindBuffer(GL_ARRAY_BUFFER, m_texBuffer);
+	glBufferData(GL_ARRAY_BUFFER, m_numPoints * sizeof(vec3), &m_coords[0], GL_STATIC_DRAW);
+
+	// clear vertex and color vectors because they have already been copied into GPU
+	m_points.clear();
+	m_coords.clear();
+
 }
 
 
@@ -357,7 +400,18 @@ HW3a::initVertexBuffer()
 void
 HW3a::divideTriangle(vec2 a, vec2 b, vec2 c, int count)
 {
-	// PUT YOUR CODE HERE
+	if (count <= 0) {
+		triangle(a, b, c);
+		return;
+	}
+	vec2 ab = (a + b) / 2;
+	vec2 ac = (a + c) / 2;
+	vec2 bc = (b + c) / 2;
+	divideTriangle(a, ab, ac, count - 1);
+	divideTriangle(ab, b, bc, count - 1);
+	divideTriangle(ac, bc, c, count - 1);
+	divideTriangle(ac, ab, bc, count - 1);
+
 }
 
 
