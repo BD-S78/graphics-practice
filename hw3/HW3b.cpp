@@ -110,6 +110,28 @@ void
 HW3b::resizeGL(int w, int h)
 {
 	// PUT YOUR CODE (use perspective projection)
+    // save window dimensions
+    m_winW = w;
+    m_winH = h;
+
+    // compute aspect ratio
+    float ar = (float) w / h;
+    float xmax, ymax;
+    if(ar > 1.0) {		// wide screen
+        xmax = ar;
+        ymax = 1.;
+    }
+    else {			// tall screen
+        xmax = 1.;
+        ymax = 1 / ar;
+    }
+
+    // set viewport to occupy full canvas
+    glViewport(0, 0, w, h);
+
+    // init viewing coordinates for orthographic projection
+    m_projection.setToIdentity();
+    m_projection.ortho(-xmax, xmax, -ymax, ymax, -1.0, 1.0);
 }
 
 
