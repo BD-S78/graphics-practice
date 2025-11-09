@@ -443,9 +443,20 @@ HW3b::resetMesh()
 				// PUT YOUR CODE HERE
 				vec.setZ((i > 4 * (m_grid / 5) && j > 4 * (m_grid / 5)) ? 0.5f : 0.0f);
 				break;
-			case HILL:
-				// PUT YOUR CODE HERE
-				break;
+            case HILL:{
+                // PUT YOUR CODE HERE
+                // Used the Gaussian Formula to Make a Centra Hill
+                float a = 1.0f;                     // height
+                float c = m_grid / 6.0f;            // controls spread (like std dev)
+                float bi = m_grid / 2.0f;           // center x
+                float bj = m_grid / 2.0f;           // center y
+
+                float dx = i - bi;
+                float dy = j - bj;
+                float dist2 = dx*dx + dy*dy;
+
+                vec.setZ(a * exp(-dist2 / (2 * c * c)));
+                break;}
 			case HILLFOUR:
 				// PUT YOUR CODE HERE
 				break;
