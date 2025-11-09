@@ -444,24 +444,18 @@ HW3b::resetMesh()
 			case CORNERBLOCK:
 				// PUT YOUR CODE HERE
 				vec.setZ((i > 4 * (m_grid / 5) && j > 4 * (m_grid / 5)) ? 0.5f : 0.0f);
-				break;
+                break;
             case HILL:{
-                // PUT YOUR CODE HERE
-                // Used the Gaussian Formula to Make a Centra Hill
-                float a = 1.0f;                     // height
-                float c = m_grid / 6.0f;            // controls spread (like std dev)
-                float bi = m_grid / 2.0f;           // center x
-                float bj = m_grid / 2.0f;           // center y
-
-                float dx = i - bi;
-                float dy = j - bj;
-                float dist2 = dx*dx + dy*dy;
-
-                vec.setZ(a * exp(-dist2 / (2 * c * c)));
+                // circular paraboloid, with a fixed height
+                vec.setZ((sin(M_PI * ((float)i/(float)m_grid)) + sin(M_PI * ((float)j/(float)m_grid)))/3.0);
                 break;}
-			case HILLFOUR:
-				// PUT YOUR CODE HERE
-				break;
+            case HILLFOUR:
+                // PUT YOUR CODE HERE
+                //
+                vec.setZ(
+                    (sin(M_PI*2 * ((float)i/(float)m_grid)) +
+                     sin(M_PI*2 * ((float)j/(float)m_grid)))/3.0);
+                break;
 		}
 	   }
 	}
