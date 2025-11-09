@@ -116,7 +116,7 @@ HW3b::resizeGL(int w, int h)
 
     // compute aspect ratio
     float ar = (float) w / h;
-    float xmax, ymax;
+    /*float xmax, ymax;
     if(ar > 1.0) {		// wide screen
         xmax = ar;
         ymax = 1.;
@@ -125,13 +125,15 @@ HW3b::resizeGL(int w, int h)
         xmax = 1.;
         ymax = 1 / ar;
     }
-
+	*/
     // set viewport to occupy full canvas
     glViewport(0, 0, w, h);
 
+
+
     // init viewing coordinates for orthographic projection
     m_projection.setToIdentity();
-    m_projection.ortho(-xmax, xmax, -ymax, ymax, -1.0, 1.0);
+	m_projection.perspective(45.0f, ar, 0.1f, 100.0f);
 }
 
 
@@ -174,15 +176,23 @@ HW3b::paintGL()
 
 	// draw textured triangles
 	switch(m_displayMode) {
-	case TEXTURED_WIREFRAME:
+	case TEXTURED_WIREFRAME: //this does nothing because it just uses both cases code before breaking so done once 2 done
 	case TEXTURED:
 		// draw textured surface
 		// PUT YOUR CODE HERE
+
+
+
+		glUseProgram(m_program[TEX_SHADER].programId());
+
 		if(m_displayMode != TEXTURED_WIREFRAME)
 			break;
 	case WIREFRAME:
 		// draw wireframe
 		// PUT YOUR CODE HERE
+
+		glUseProgram(m_program[WIRE_SHADER].programId());
+
 		break;
 	case FLAT_COLOR:
 		glUseProgram(m_program[FLAT_SHADER].programId());	
@@ -370,8 +380,8 @@ HW3b::resetMesh()
 {
 	// pause animation to reset grid without interruption by timer
 	if(m_wave) m_timer->stop();
-
-	for(int i=0; i< m_grid; ++i) {
+	
+	for(int i=0; i< m_grid; ++i) { // i is vertical top ->bottom 0 -> maxsize -1, j is horizontal left->right 0 to maxsize -1
 	   for(int j=0; j< m_grid; ++j) {
 		m_force[i][j] = 0.0f;
 		m_veloc[i][j] = 0.0f;
@@ -385,6 +395,7 @@ HW3b::resetMesh()
 				break;
 			case HOLE:
 				// PUT YOUR CODE HERE
+				vec.setZ((i < (m_grid/2 + m_grid / 4) && i > (m_grid / 2 - m_grid / 4) && j > (m_grid / 2 - m_grid / 4) && j < (m_grid / 2 + m_grid / 4)) ? -0.5f : 0.0f);
 				break;
 			case DIAGONALWALL:
 				// PUT YOUR CODE HERE
@@ -393,13 +404,18 @@ HW3b::resetMesh()
 				// PUT YOUR CODE HERE
 				break;
 			case DIAGONALBLOCK:
-				// PUT YOUR CODE HERE
+				// PUT YOUR CODE HERE want the specific line of the exmaple
+				vec.setZ((i + j > m_grid-3) ? 0.5f : 0.0f); //using 3 to get that slight block extra the example has
+
 				break;
 			case MIDDLEBLOCK:
 				// PUT YOUR CODE HERE
+				vec.setZ((i < (m_grid / 2 + m_grid / 4) && i >(m_grid / 2 - m_grid / 4) && j > (m_grid / 2 - m_grid / 4) && j < (m_grid / 2 + m_grid / 4)) ? 0.5f : 0.0f);
+
 				break;
 			case CORNERBLOCK:
 				// PUT YOUR CODE HERE
+				vec.setZ((i > 4 * (m_grid / 5) && j > 4 * (m_grid / 5)) ? 0.5f : 0.0f);
 				break;
 			case HILL:
 				// PUT YOUR CODE HERE
