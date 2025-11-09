@@ -180,11 +180,17 @@ HW3b::paintGL()
 	case TEXTURED:
 		// draw textured surface
 		// PUT YOUR CODE HERE
-
-
+		glBindTexture(GL_TEXTURE_2D, m_texture);
 
 		glUseProgram(m_program[TEX_SHADER].programId());
+		glUniformMatrix4fv(m_uniform[TEX_SHADER][VIEW], 1, GL_FALSE, m_camera->view().constData());
+		glUniformMatrix4fv(m_uniform[TEX_SHADER][PROJ], 1, GL_FALSE, m_projection.constData());
 
+
+		glUniform1i(m_uniform[TEX_SHADER][SAMPLER], 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesBuffer[0]);
+		glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)m_indices_triangles.size(), GL_UNSIGNED_SHORT, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		if(m_displayMode != TEXTURED_WIREFRAME)
 			break;
 	case WIREFRAME:
@@ -192,6 +198,12 @@ HW3b::paintGL()
 		// PUT YOUR CODE HERE
 
 		glUseProgram(m_program[WIRE_SHADER].programId());
+		glUniformMatrix4fv(m_uniform[WIRE_SHADER][VIEW], 1, GL_FALSE, m_camera->view().constData());
+		glUniformMatrix4fv(m_uniform[WIRE_SHADER][PROJ], 1, GL_FALSE, m_projection.constData());
+		glUniform3fv(m_uniform[WIRE_SHADER][LIGHTDIR], 1, &m_light->eye()[0]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesBuffer[0]);
+		glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)m_indices_triangles.size(), GL_UNSIGNED_SHORT, 0);
+
 
 		break;
 	case FLAT_COLOR:
@@ -382,7 +394,7 @@ HW3b::resetMesh()
 	if(m_wave) m_timer->stop();
 	
 	for(int i=0; i< m_grid; ++i) { // i is vertical top ->bottom 0 -> maxsize -1, j is horizontal left->right 0 to maxsize -1
-	   for(int j=0; j< m_grid; ++j) {
+	   for(int j=0; j< m_grid; ++j) { //i cant tell the specific numbers of depth but they should look close to example
 		m_force[i][j] = 0.0f;
 		m_veloc[i][j] = 0.0f;
 		QVector3D &vec = m_vertices[i][j];
@@ -399,9 +411,23 @@ HW3b::resetMesh()
 				break;
 			case DIAGONALWALL:
 				// PUT YOUR CODE HERE
+				if (i + j == m_grid - 1 || i + j == m_grid - 2) {
+					vec.setZ(0.25f);
+				}
+				else {
+					vec.setZ(0.0f);
+				}
+
 				break;
 			case SIDEWALL:
 				// PUT YOUR CODE HERE
+				if (i == 1 || i == 2) {
+					vec.setZ(0.25f);
+				}
+				else {
+					vec.setZ(0.0f);
+				}
+
 				break;
 			case DIAGONALBLOCK:
 				// PUT YOUR CODE HERE want the specific line of the exmaple
