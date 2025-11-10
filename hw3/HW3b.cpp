@@ -116,17 +116,8 @@ HW3b::resizeGL(int w, int h)
 
     // compute aspect ratio
     float ar = (float) w / h;
-    /*float xmax, ymax;
-    if(ar > 1.0) {		// wide screen
-        xmax = ar;
-        ymax = 1.;
-    }
-    else {			// tall screen
-        xmax = 1.;
-        ymax = 1 / ar;
-    }
-	*/
-    // set viewport to occupy full canvas
+
+	// set viewport to occupy full canvas
     glViewport(0, 0, w, h);
 
 
@@ -176,7 +167,7 @@ HW3b::paintGL()
 
 	// draw textured triangles
 	switch(m_displayMode) {
-	case TEXTURED_WIREFRAME: //this does nothing because it just uses both cases code before breaking so done once 2 done
+	case TEXTURED_WIREFRAME: //this works by it just uses both cases code before breaking so done once both done
 	case TEXTURED:
 		// draw textured surface
 		// PUT YOUR CODE HERE
@@ -197,15 +188,12 @@ HW3b::paintGL()
 		// draw wireframe
 		// PUT YOUR CODE HERE
 
-
-
 		glUseProgram(m_program[WIRE_SHADER].programId());
 		glUniformMatrix4fv(m_uniform[WIRE_SHADER][VIEW], 1, GL_FALSE, m_camera->view().constData());
 		glUniformMatrix4fv(m_uniform[WIRE_SHADER][PROJ], 1, GL_FALSE, m_projection.constData());
 		glUniform3fv(m_uniform[WIRE_SHADER][LIGHTDIR], 1, &m_light->eye()[0]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesBuffer[1]);
 		glDrawElements(GL_LINES, (GLsizei)m_indices_wireframe.size(), GL_UNSIGNED_SHORT, 0);
-
 
 		break;
 	case FLAT_COLOR:
@@ -407,14 +395,16 @@ HW3b::resetMesh()
 			case SPIKE:
 				vec.setZ((i==j && i==m_grid/2) ? 1.0f : 0.0f);
 				break;
-			case HOLE:
+			case HOLE://the example actually has the center stay at 0.0 while everything else goes to 0.5 but i felt that it made more sense for a "hole" to have the center go down from 0,0
+				//the example's code would be -0.5f: 0.0f
+				// vec.setZ((i < (m_grid/2 + m_grid / 6) && i > (m_grid / 2 - m_grid / 6) && j > (m_grid / 2 - m_grid / 6) && j < (m_grid / 2 + m_grid / 6)) ? 0.0f : 0.5f);
 				// PUT YOUR CODE HERE
-				vec.setZ((i < (m_grid/2 + m_grid / 4) && i > (m_grid / 2 - m_grid / 4) && j > (m_grid / 2 - m_grid / 4) && j < (m_grid / 2 + m_grid / 4)) ? -0.5f : 0.0f);
+				vec.setZ((i < (m_grid/2 + m_grid / 6) && i > (m_grid / 2 - m_grid / 56) && j > (m_grid / 2 - m_grid / 6) && j < (m_grid / 2 + m_grid / 6)) ? -0.5f : 0.0f);
 				break;
 			case DIAGONALWALL:
 				// PUT YOUR CODE HERE
 				if (i + j == m_grid - 1 || i + j == m_grid - 2) {
-					vec.setZ(0.25f);
+					vec.setZ(0.3f);
 				}
 				else {
 					vec.setZ(0.0f);
@@ -423,35 +413,33 @@ HW3b::resetMesh()
 				break;
 			case SIDEWALL:
 				// PUT YOUR CODE HERE
-				if (i == 1 || i == 2) {
-					vec.setZ(0.25f);
+				if (i == 1) {
+					vec.setZ(0.5f);
 				}
 				else {
 					vec.setZ(0.0f);
 				}
-
 				break;
 			case DIAGONALBLOCK:
-				// PUT YOUR CODE HERE want the specific line of the exmaple
+				// PUT YOUR CODE HERE
 				vec.setZ((i + j > m_grid-3) ? 0.5f : 0.0f); //using 3 to get that slight block extra the example has
 
 				break;
-			case MIDDLEBLOCK:
+			case MIDDLEBLOCK: //i dont know what size the block should be according to example but this is close
 				// PUT YOUR CODE HERE
-				vec.setZ((i < (m_grid / 2 + m_grid / 4) && i >(m_grid / 2 - m_grid / 4) && j > (m_grid / 2 - m_grid / 4) && j < (m_grid / 2 + m_grid / 4)) ? 0.5f : 0.0f);
+				vec.setZ((i < (m_grid / 2 + m_grid / 6) && i >(m_grid / 2 - m_grid / 6) && j > (m_grid / 2 - m_grid / 6) && j < (m_grid / 2 + m_grid / 6)) ? 0.5f : 0.0f);
 
 				break;
 			case CORNERBLOCK:
 				// PUT YOUR CODE HERE
 				vec.setZ((i > 4 * (m_grid / 5) && j > 4 * (m_grid / 5)) ? 0.5f : 0.0f);
                 break;
-            case HILL:{
+            case HILL:
                 // circular paraboloid, with a fixed height
                 vec.setZ((sin(M_PI * ((float)i/(float)m_grid)) + sin(M_PI * ((float)j/(float)m_grid)))/3.0);
-                break;}
+                break;
             case HILLFOUR:
                 // PUT YOUR CODE HERE
-                //
                 vec.setZ(
                     (sin(M_PI*2 * ((float)i/(float)m_grid)) +
                      sin(M_PI*2 * ((float)j/(float)m_grid)))/3.0);
