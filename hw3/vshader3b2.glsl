@@ -1,16 +1,14 @@
 #version 330
 
-// Input vertex data, different for all executions of this shader.
-in vec3  a_Position;	// attribute variable: position vector
+in vec3  a_Position;	
 
-// Values that stay constant for the whole mesh.
 uniform mat4 u_Projection;
 uniform mat4 u_View;
 
 
 void main() 
 {
-	// Output position of the vertex, in clip space : MVP * position
-	gl_Position =  u_Projection * u_View * vec4(a_Position, 1);
+	gl_Position =  u_Projection * u_View * vec4(a_Position, 1); 
+	//color for wireframe is all one color defined by us white
 		
 }

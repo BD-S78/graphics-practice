@@ -1,9 +1,8 @@
 #version 330
 
-// Interpolated values from the vertex shaders
 in vec2 v_TexCoord;
 
-uniform	sampler2D u_Sampler;	// uniform variable for the texture image
+uniform	sampler2D u_Sampler;
 
 out vec4 fragColor;
 
