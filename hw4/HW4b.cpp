@@ -142,7 +142,19 @@ HW4b::paintGL()
 
 	// init projection matrix with identity matrix and a non-zero m[7] entry
 	// based on light position component
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
+
+	//idk
+		glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	m[0] = 1;
+	m[5] = 1;
+	m[10] = 1;
+	m[7] = -1.0f / nlp[1];
+	glLoadMatrixf(m);
+	glMatrixMode(GL_MODELVIEW);
+
+
 
 	// setup camera view
 	glLoadIdentity();
@@ -159,7 +171,11 @@ HW4b::paintGL()
 	glMultMatrixf(m_cameraView.constData());
 
 	// update the position of light0
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
+	//idk
+	glLightfv(GL_LIGHT0, GL_POSITION, nlp);
+
+
 
 	// enable lighting and color material
 	glEnable(GL_LIGHTING);
@@ -178,8 +194,11 @@ HW4b::paintGL()
 	// draw object's shadow (projected onto the xz plane)
 // PUT YOUR CODE HERE
 
+
+
 	// draw the light source
 // PUT YOUR CODE HERE
+
 
 	// draw the xz floor
 	glColor4f(.5f, .5f, .5f, 1);
@@ -220,7 +239,23 @@ HW4b::controlPanel()
 void 
 HW4b::drawSphere(int lats, int longs)
 {
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
+	//idk
+	//trying to get using the slides code?
+	for (int i = 0; i <= lats; i++) { // calculate triangle vertices
+		for (int j = 0; j <= longs; j++) {
+			float y = (float)cos(DEGtoRAD * (180 - i * 180 / longs));
+			float x = -(float)cos(DEGtoRAD * (j * 360 / lats)) * (float)abs(cos(asin(y)));
+			float z = (float)sin(DEGtoRAD * (j * 360 / lats)) * (float)abs(cos(asin(y)));
+
+			vertices[i * (prec + 1) + j] = glm::vec3(x, y, z);
+			texCoords[i * (prec + 1) + j] = glm::vec2(((float)j / prec, (float)i / prec));
+			normals[i * (prec + 1) + j] = glm::vec3(x, y, z);
+
+		}
+	}
+
+
 }
 
 
