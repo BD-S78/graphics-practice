@@ -143,18 +143,12 @@ HW4b::paintGL()
 	// init projection matrix with identity matrix and a non-zero m[7] entry
 	// based on light position component
 	// PUT YOUR CODE HERE
-
-	//idk
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
 	m[0] = 1;
-	m[5] = 0;
+	m[4] = -nlp[0] / nlp[1];
+	m[6] = -nlp[2] / nlp[1];
 	m[7] = -1.0 / nlp[1];
 	m[10] = 1;
 	m[15] = 1;
-
-	m[4] = -nlp[0] / nlp[1];
-	m[6] = -nlp[2] / nlp[1];
 	// setup camera view
 	glLoadIdentity();
 
@@ -171,7 +165,6 @@ HW4b::paintGL()
 
 	// update the position of light0
 	// PUT YOUR CODE HERE
-	//idk
 	glLightfv(GL_LIGHT0, GL_POSITION, nlp);
 
 
@@ -184,11 +177,11 @@ HW4b::paintGL()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, m_gray);
 
 	// draw the translated/scaled sphere object
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
 	glPushMatrix();
 	glTranslatef(0, height, 0);
 	glScalef(s2, s1, s2);
-	glColor4f(0.605, 0.478, 0, 1);
+	glColor4f(0.705, 0.578, 0.039, 1);
 	drawSphere(30, 30);
 	glPopMatrix();
 
@@ -197,28 +190,26 @@ HW4b::paintGL()
 	glDisable(GL_LIGHTING);
 
 	// draw object's shadow (projected onto the xz plane)
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
 	glPushMatrix();
 	glDisable(GL_LIGHTING);
-	glColor4f(0.3f, 0.3f, 0.3f, 1);
-
-	glMultMatrixf(m);
+	glColor4f(0.2, 0.2, 0.2, 1);
+	
+	glMultMatrixf(m); //from before
 	glTranslatef(0, height, 0);
 	glScalef(s2, s1, s2);
-	
 	drawSphere(30, 30);
 	glPopMatrix();
 
 
 
 	// draw the light source
-// PUT YOUR CODE HERE
+	// PUT YOUR CODE HERE
 	glPushMatrix();
-	glDisable(GL_LIGHTING);
 	glColor4f(1, 1, 0, 1);
 	glTranslatef(nlp[0], nlp[1], nlp[2]);
 	glScalef(0.3, 0.3, 0.3);
-	drawSphere(15, 15);
+	drawSphere(30, 30);
 	glPopMatrix();
 
 
@@ -262,22 +253,40 @@ void
 HW4b::drawSphere(int lats, int longs)
 {
 	// PUT YOUR CODE HERE
-	//idk
-	//trying to get using the slides code?
-	/*
-	for (int i = 0; i <= lats; i++) { // calculate triangle vertices
-		for (int j = 0; j <= longs; j++) {
-			float y = (float)cos(DEGtoRAD * (180 - i * 180 / longs));
-			float x = -(float)cos(DEGtoRAD * (j * 360 / lats)) * (float)abs(cos(asin(y)));
-			float z = (float)sin(DEGtoRAD * (j * 360 / lats)) * (float)abs(cos(asin(y)));
 
-			vertices[i * (prec + 1) + j] = glm::vec3(x, y, z);
-			texCoords[i * (prec + 1) + j] = glm::vec2(((float)j / prec, (float)i / prec));
-			normals[i * (prec + 1) + j] = glm::vec3(x, y, z);
-
+	int i;
+	int j;
+	int currlat;
+	int nextlat;
+	vec3* vertices = new vec3[(lats + 1) * (longs + 1)];
+	vec3* normals = new vec3[(lats + 1) * (longs + 1)];
+	for (i = 0; i <= lats; i++) { //calc vertices and save
+		for (j = 0; j <= longs; j++) {
+			float y = (float)cos(DEGtoRAD *(180 - i * 180 / lats));
+			float x = -(float)cos(DEGtoRAD *(j * 360 / longs)) * (float)abs(cos(asin(y)));
+			float z = (float)sin(DEGtoRAD * (j * 360 / longs)) * (float)abs(cos(asin(y)));
+			vertices[i * (longs + 1) + j] = vec3(x, y, z);
+			normals[i * (longs + 1) + j] = vec3(x, y, z);
 		}
 	}
-	*/
+
+	for (i = 0; i < lats; i++) {
+		glBegin(GL_QUAD_STRIP);
+		for (j = 0; j <= longs; j++) {
+			currlat = i * (longs + 1) + j; //current latitude vertex
+			nextlat = (i + 1) * (longs + 1) + j; //next latitude vertex
+
+			glNormal3fv(&normals[currlat][0]);
+			glVertex3fv(&vertices[currlat][0]);
+
+			glNormal3fv(&normals[nextlat][0]);
+			glVertex3fv(&vertices[nextlat][0]);
+		}
+		glEnd();
+	}
+
+	delete[] normals;
+	delete[] vertices;
 
 }
 
