@@ -273,37 +273,44 @@ HW4a::paintGL()
 	glUniform3fv(m_uniform[SMOOTH_SHADER][LIGHTDIR], 1, &m_light->eye()[0]);
 
 
-	mvStack.push(m_camera->view());
+    mvStack.push(m_camera->view()); // camera at bottom of stack
 
-	glUseProgram(m_program[m_displayMode].programId());
-	glUniform3fv(m_uniform[m_displayMode][LIGHTDIR], 1, &m_light->eye()[0]);
-	glUniformMatrix4fv(m_uniform[m_displayMode][PROJ], 1, GL_FALSE, m_projection.constData());
-	
-	// init sun translation to identity matrix
-	QMatrix4x4 translate_sun;
-	translate_sun.setToIdentity();
+    glUseProgram(m_program[m_displayMode].programId());
+    glUniform3fv(m_uniform[m_displayMode][LIGHTDIR], 1, &m_light->eye()[0]);
+    glUniformMatrix4fv(m_uniform[m_displayMode][PROJ], 1, GL_FALSE, m_projection.constData());
 
-	// apply translate_sun to top of stack
-	// PUT YOUR CODE HERE
+    // init sun translation to identity matrix
+    QMatrix4x4 translate_sun;
+    translate_sun.setToIdentity();
 
-	// duplicate top of stack
-	// PUT YOUR CODE HERE
+    // apply translate_sun to top of stack
+    // PUT YOUR CODE HERE
+    mvStack.push(mvStack.top());
+    mvStack.top() *= translate_sun; // apply translation
 
-	// init sun rotation: m_angle about the y-axis
-	QMatrix4x4 rotate_sun;
-	rotate_sun.rotate(m_angle*Radian2Deg / 2.0f, vec3(0, 1, 0));
 
-	// apply sun rotation to top of stack
-	// PUT YOUR CODE HERE
+    // duplicate top of stack
+    // PUT YOUR CODE HERE
+    mvStack.push(mvStack.top());
 
-	// display sun according to display mode
-	glUniformMatrix4fv(m_uniform[m_displayMode][VIEW], 1, GL_FALSE, mvStack.top().constData());
-	glUniform1i(m_uniform[m_displayMode][SAMPLER], 0);
-	m_sun->display(m_displayMode);
-	mvStack.pop();
+    // init sun rotation: m_angle about the y-axis
+    QMatrix4x4 rotate_sun;
+    rotate_sun.rotate(m_angle*Radian2Deg / 2.0f, vec3(0, 1, 0));
 
-	// earth: push top of stack (sun model-view matrix) to build up earth transform
-	// PUT YOUR CODE
+    // apply sun rotation to top of stack
+    // PUT YOUR CODE HERE
+    mvStack.top() *= rotate_sun; // apply rotation
+
+
+    // display sun according to display mode
+    glUniformMatrix4fv(m_uniform[m_displayMode][VIEW], 1, GL_FALSE, mvStack.top().constData());
+    glUniform1i(m_uniform[m_displayMode][SAMPLER], 0);
+    m_sun->display(m_displayMode);
+    mvStack.pop();                // rotation of sun should not affect rest of transformations
+
+    // earth: push top of stack (sun model-view matrix) to build up earth transform
+    // PUT YOUR CODE
+    mvStack.push(mvStack.top()); // create new matrix for top of stack, must build off parents transformation matrix
 
 	// apply earth translation of [5*sin(m_angle), 0, 5*cos(m_angle)]
 	QMatrix4x4 translate_earth;
