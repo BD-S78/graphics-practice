@@ -145,17 +145,16 @@ HW4b::paintGL()
 	// PUT YOUR CODE HERE
 
 	//idk
-		glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
 	m[0] = 1;
-	m[5] = 1;
+	m[5] = 0;
+	m[7] = -1.0 / nlp[1];
 	m[10] = 1;
-	m[7] = -1.0f / nlp[1];
-	glLoadMatrixf(m);
-	glMatrixMode(GL_MODELVIEW);
+	m[15] = 1;
 
-
-
+	m[4] = -nlp[0] / nlp[1];
+	m[6] = -nlp[2] / nlp[1];
 	// setup camera view
 	glLoadIdentity();
 
@@ -186,6 +185,12 @@ HW4b::paintGL()
 
 	// draw the translated/scaled sphere object
 // PUT YOUR CODE HERE
+	glPushMatrix();
+	glTranslatef(0, height, 0);
+	glScalef(s2, s1, s2);
+	glColor4f(0.605, 0.478, 0, 1);
+	drawSphere(30, 30);
+	glPopMatrix();
 
 	// disable lighting
 	glDisable(GL_COLOR_MATERIAL);
@@ -193,11 +198,28 @@ HW4b::paintGL()
 
 	// draw object's shadow (projected onto the xz plane)
 // PUT YOUR CODE HERE
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glColor4f(0.3f, 0.3f, 0.3f, 1);
+
+	glMultMatrixf(m);
+	glTranslatef(0, height, 0);
+	glScalef(s2, s1, s2);
+	
+	drawSphere(30, 30);
+	glPopMatrix();
 
 
 
 	// draw the light source
 // PUT YOUR CODE HERE
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glColor4f(1, 1, 0, 1);
+	glTranslatef(nlp[0], nlp[1], nlp[2]);
+	glScalef(0.3, 0.3, 0.3);
+	drawSphere(15, 15);
+	glPopMatrix();
 
 
 	// draw the xz floor
@@ -242,6 +264,7 @@ HW4b::drawSphere(int lats, int longs)
 	// PUT YOUR CODE HERE
 	//idk
 	//trying to get using the slides code?
+	/*
 	for (int i = 0; i <= lats; i++) { // calculate triangle vertices
 		for (int j = 0; j <= longs; j++) {
 			float y = (float)cos(DEGtoRAD * (180 - i * 180 / longs));
@@ -254,7 +277,7 @@ HW4b::drawSphere(int lats, int longs)
 
 		}
 	}
-
+	*/
 
 }
 
