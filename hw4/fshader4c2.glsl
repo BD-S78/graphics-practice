@@ -37,40 +37,44 @@ vec2 poissonDisk[16] = vec2[](
 void main()
 {
 	// Light emission properties
-// PUT YOUR CODE HERE
+	vec3 LightColor = vec3(1.0, 1.0, 1.0);
+	float LightPower = 1.0f;
 	
 	// Material properties
-// PUT YOUR CODE HERE
+	vec3 MaterialDiffuseColor = vColor;
+	vec3 MaterialAmbientColor = vec3(0.3, 0.3, 0.3) * MaterialDiffuseColor;
+	vec3 MaterialSpecularColor = vec3(0.3, 0.3, 0.3);
 
 	// Normal of the computed fragment, in camera space
-// PUT YOUR CODE HERE
+	vec3 n = normalize(Normal_cameraspace);
 
 	// Direction of the light (from the fragment to the light)
-// PUT YOUR CODE HERE
+	vec3 l = normalize(LightDirection_cameraspace);
 
 	// Cosine of the angle between the normal and the light direction, 
 	// clamped above 0
 	//  - light is at the vertical of the triangle -> 1
 	//  - light is perpendiular to the triangle -> 0
 	//  - light is behind the triangle -> 0
-// PUT YOUR CODE HERE
+	float cosTheta = clamp(dot(n, l), 0.0, 1.0);
 	
 	// Eye vector (towards the camera)
-// PUT YOUR CODE HERE
+	vec3 E = normalize(EyeDirection_cameraspace);
 
 	// Direction in which the triangle reflects the light
-// PUT YOUR CODE HERE
+	vec3 R = reflect(-l, n);
 
 	// Cosine of the angle between the Eye vector and the Reflect vector,
 	// clamped to 0
 	//  - Looking into the reflection -> 1
 	//  - Looking elsewhere -> < 1
-// PUT YOUR CODE HERE
+	float cosAlpha = clamp(dot(E, R), 0.0, 1.0);
 	
 	float visibility = 1.0;
 
 	// ...variable bias
-// PUT YOUR CODE HERE
+	float bias = 0.005 * tan(acos(cosTheta));
+	bias = clamp(bias, 0.0, 0.01);
 
 	// Sample the shadow map 4 times
 	for (int i=0; i<4; ++i) {
