@@ -38,11 +38,11 @@ void main()
 {
 	// Light emission properties
 	vec3 LightColor = vec3(1.0, 1.0, 1.0);
-	float LightPower = 1.0f;
+	float LightPower = 0.8f;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = vColor;
-	vec3 MaterialAmbientColor = vec3(0.3, 0.3, 0.3) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.2, 0.2, 0.2) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3, 0.3, 0.3);
 
 	// Normal of the computed fragment, in camera space
