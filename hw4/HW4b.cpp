@@ -273,8 +273,8 @@ HW4b::drawSphere(int lats, int longs)
 	for (i = 0; i < lats; i++) {
 		glBegin(GL_QUAD_STRIP);
 		for (j = 0; j <= longs; j++) {
-			currlat = i * (longs + 1) + j; //current latitude vertex
-			nextlat = (i + 1) * (longs + 1) + j; //next latitude vertex
+			currlat = i * (longs + 1) + j; //current latitude's vertex
+			nextlat = (i + 1) * (longs + 1) + j; //next latitude's vertex
 
 			glNormal3fv(&normals[currlat][0]);
 			glVertex3fv(&vertices[currlat][0]);
